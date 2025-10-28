@@ -6,7 +6,8 @@ import { useAuth } from '../../hooks/useAuth';
 
 
 export function Header() {
-  const { user, signOut } = useAuth();
+  const auth = useAuth();
+  const { user } = auth;
   const navigate = useNavigate();
   const location = useLocation(); // 👈 Para saber la ruta actual
   const [searchQuery, setSearchQuery] = useState('');
@@ -15,7 +16,10 @@ export function Header() {
 
 const handleSignOut = async () => {
   try {
-    await signOut(); // 👈 Usa el método del contexto
+    // Si el contexto no expone signOut en su tipo, usa una comprobación segura en tiempo de ejecución
+    if ('signOut' in auth && typeof (auth as any).signOut === 'function') {
+      await (auth as any).signOut();
+    }
     navigate('/');   // Redirige después
   } catch (error) {
     console.error('Error signing out:', error);

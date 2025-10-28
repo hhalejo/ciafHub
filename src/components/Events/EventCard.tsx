@@ -3,33 +3,31 @@ import { Event } from "../../types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useState } from "react";
-import { useAuth } from "../../hooks/useAuth"; // 👈 Importamos el hook de autenticación
 
 interface EventCardProps {
   event: Event;
   onClick?: () => void;
   onDelete: (id: string) => void;
+  currentUserId: string; // 👈 id del usuario actual
 }
 
-export function EventCard({ event, onDelete, onClick }: EventCardProps) {
+export function EventCard({ event, onDelete, onClick, currentUserId }: EventCardProps) {
   const eventDate = new Date(event.date);
   const [showConfirm, setShowConfirm] = useState(false);
-  const { user } = useAuth(); // 👈 Usuario actual
-
-  // ✅ Solo el dueño puede eliminar
-  const isOwner = user && user.id === event.user_id;
 
   const handleDelete = () => {
     onDelete(event.id);
     setShowConfirm(false);
   };
 
+  const isOwner = event.user_id === currentUserId; // ✅ validación del dueño
+
   return (
     <div
       onClick={onClick}
       className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer p-6 border border-gray-200 relative"
     >
-      {/* 🔒 Mostrar botón eliminar solo si es el dueño */}
+      {/* Botón eliminar solo si es dueño */}
       {isOwner && (
         <button
           onClick={(e) => {
