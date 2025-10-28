@@ -20,7 +20,6 @@ export function EventCalendar() {
       if (error) throw error;
 
       if (data) {
-        // transformar datos si es necesario
         const mappedEvents: Event[] = data.map((e: any) => ({
           id: e.id,
           title: e.title,
@@ -43,15 +42,36 @@ export function EventCalendar() {
     }
   };
 
+  // 🧨 NUEVO — Eliminar evento de Supabase
+  const handleDeleteEvent = async (id: string) => {
+    const confirmDelete = window.confirm("¿Seguro que deseas eliminar este evento?");
+    if (!confirmDelete) return;
+
+    try {
+      const { error } = await supabase.from("eventos").delete().eq("id", id);
+      if (error) throw error;
+
+      // Quitar el evento eliminado del estado local
+      setEvents((prevEvents) => prevEvents.filter((e) => e.id !== id));
+    } catch (err) {
+      console.error("Error al eliminar evento:", err);
+      alert("No se pudo eliminar el evento. Verifica tus permisos o intenta más tarde.");
+    }
+  };
+
   useEffect(() => {
     fetchEvents();
 
-    // opcional: suscripción en tiempo real
+    // suscripción en tiempo real (opcional)
     const subscription = supabase
       .channel("public:eventos")
-      .on("postgres_changes", { event: "*", schema: "public", table: "eventos" }, () => {
-        fetchEvents();
-      })
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "eventos" },
+        () => {
+          fetchEvents();
+        }
+      )
       .subscribe();
 
     return () => {
@@ -66,7 +86,12 @@ export function EventCalendar() {
       {loading ? (
         <div className="text-gray-500 py-10 text-center">Cargando eventos...</div>
       ) : (
-        <EventList events={events} onSelectEvent={setSelectedEvent} />
+        // 👇 Pasamos la función de eliminar
+        <EventList
+          events={events}
+          onSelectEvent={setSelectedEvent}
+          onDelete={handleDeleteEvent}
+        />
       )}
 
       {selectedEvent && (

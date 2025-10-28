@@ -1,31 +1,37 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, Fragment } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { MagnifyingGlassIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import { Menu, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import { authService } from '../../lib/supabase';
+
 
 export function Header() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation(); // 👈 Para saber la ruta actual
   const [searchQuery, setSearchQuery] = useState('');
 
-  const handleSignOut = async () => {
-    try {
-      await authService.signOut();
-      navigate('/');
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
+   // 👈 Añade signOut aquí
 
+const handleSignOut = async () => {
+  try {
+    await signOut(); // 👈 Usa el método del contexto
+    navigate('/');   // Redirige después
+  } catch (error) {
+    console.error('Error signing out:', error);
+  }
+};
+
+  
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
     }
   };
+
+  // 👇 Detecta si estamos en login o signup
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -39,21 +45,23 @@ export function Header() {
             <span className="text-xl font-bold text-gray-900">CIAF Community</span>
           </Link>
 
-          {/* Search Bar */}
-          <form onSubmit={handleSearch} className="flex-1 max-w-lg mx-8">
-            <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Buscar servicios, eventos, oportunidades..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-          </form>
+          {/* 🔍 Search Bar (solo se muestra si no es login/signup) */}
+          {!isAuthPage && (
+            <form onSubmit={handleSearch} className="flex-1 max-w-lg mx-8">
+              <div className="relative">
+                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Buscar servicios, eventos, oportunidades..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </form>
+          )}
 
-          {/* User Menu */}
+          {/* 👤 User Menu */}
           {user ? (
             <Menu as="div" className="relative">
               <Menu.Button className="flex items-center space-x-2 text-gray-700 hover:text-gray-900">

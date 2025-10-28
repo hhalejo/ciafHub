@@ -3,6 +3,7 @@ import { Event } from "../../types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useState } from "react";
+import { useAuth } from "../../hooks/useAuth"; // 👈 Importamos el hook de autenticación
 
 interface EventCardProps {
   event: Event;
@@ -13,6 +14,10 @@ interface EventCardProps {
 export function EventCard({ event, onDelete, onClick }: EventCardProps) {
   const eventDate = new Date(event.date);
   const [showConfirm, setShowConfirm] = useState(false);
+  const { user } = useAuth(); // 👈 Usuario actual
+
+  // ✅ Solo el dueño puede eliminar
+  const isOwner = user && user.id === event.user_id;
 
   const handleDelete = () => {
     onDelete(event.id);
@@ -24,17 +29,19 @@ export function EventCard({ event, onDelete, onClick }: EventCardProps) {
       onClick={onClick}
       className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer p-6 border border-gray-200 relative"
     >
-      {/* Botón eliminar */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          setShowConfirm(true);
-        }}
-        className="absolute bottom-2 right-2 text-red-500 hover:text-red-700"
-        title="Eliminar evento"
-      >
-        <TrashIcon className="h-5 w-5" />
-      </button>
+      {/* 🔒 Mostrar botón eliminar solo si es el dueño */}
+      {isOwner && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowConfirm(true);
+          }}
+          className="absolute bottom-2 right-2 text-red-500 hover:text-red-700"
+          title="Eliminar evento"
+        >
+          <TrashIcon className="h-5 w-5" />
+        </button>
+      )}
 
       {/* Modal de confirmación */}
       {showConfirm && (
@@ -98,9 +105,6 @@ export function EventCard({ event, onDelete, onClick }: EventCardProps) {
         <span className="text-sm text-gray-600">
           Por: <strong>{event.user.full_name}</strong>
         </span>
-        {/*<span className="text-xs text-gray-500">
-          {format(new Date(event.created_at), "dd MMM", { locale: es })}
-        </span>*/}
       </div>
     </div>
   );

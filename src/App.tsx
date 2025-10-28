@@ -1,15 +1,15 @@
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Header } from './components/Layout/Header';
-import { Navigation } from './components/Layout/Navigation';
-import { AuthForm } from './components/Auth/AuthForm';
-import { Dashboard } from './components/Dashboard/Dashboard';
+import { Header } from './Components/Layout/Header';
+import { Navigation } from './Components/Layout/Navigation';
+import { AuthForm } from './Components/Auth/AuthForm';
+import { Dashboard } from './Components/Dashboard/Dashboard';
 import { useAuth } from './hooks/useAuth';
-import { CreatePage } from "./components/pages/CreatePage";
-import { ServiceList } from "./components/Services/ServiceList";
-import { EventCalendar } from "./components/Events/EventCalendar";
-import { AnnouncementList } from './components/Announcements/AnnouncementList';
-import { OpportunitiesList } from './components/Opportunities/OpportunitiesList';
+import { CreatePage } from "./Components/pages/CreatePage";
+import { ServiceList } from "./Components/Services/ServiceList";
+import { EventCalendar } from "./Components/Events/EventCalendar";
+import { AnnouncementList } from './Components/Announcements/AnnouncementList';
+import { OpportunitiesList } from './Components/Opportunities/OpportunitiesList';
 
 function App() {
   const { user, loading } = useAuth();

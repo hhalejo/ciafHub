@@ -1,30 +1,22 @@
-// src/components/events/EventList.tsx
-import { Event } from "../../types";
+import React from "react";
 import { EventCard } from "./EventCard";
+import { Event } from "../../types";
 
 interface EventListProps {
   events: Event[];
   onSelectEvent: (event: Event) => void;
-  onDeleteEvent: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
-export function EventList({ events, onSelectEvent, onDeleteEvent }: EventListProps) {
-  if (events.length === 0) {
-    return (
-      <div className="text-center text-gray-500 py-10">
-        No hay eventos académicos programados 📅
-      </div>
-    );
-  }
-
+export function EventList({ events, onSelectEvent, onDelete }: EventListProps) {
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {events.map((event) => (
         <EventCard
           key={event.id}
           event={event}
           onClick={() => onSelectEvent(event)}
-          onDelete={onDeleteEvent}
+          onDelete={onDelete}
         />
       ))}
     </div>
