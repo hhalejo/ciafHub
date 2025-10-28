@@ -19,10 +19,12 @@ const handleSignOut = async () => {
     // Si el contexto no expone signOut en su tipo, usa una comprobación segura en tiempo de ejecución
     if ('signOut' in auth && typeof (auth as any).signOut === 'function') {
       await (auth as any).signOut();
+      console.log("Usuario actual:", user);
     }
     navigate('/');   // Redirige después
   } catch (error) {
     console.error('Error signing out:', error);
+    
   }
 };
 
@@ -37,6 +39,10 @@ const handleSignOut = async () => {
   // 👇 Detecta si estamos en login o signup
   const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
 
+  console.log("Usuario actual:", user);
+
+  
+
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -47,6 +53,7 @@ const handleSignOut = async () => {
               <span className="text-white font-bold text-sm">C</span>
             </div>
             <span className="text-xl font-bold text-gray-900">CIAF Community</span>
+
           </Link>
 
          {user && !isAuthPage && (
@@ -71,6 +78,7 @@ const handleSignOut = async () => {
                 <UserCircleIcon className="h-8 w-8" />
                 <span className="hidden md:block text-sm font-medium">
                   {user.user_metadata?.full_name || user.email}
+                  
                 </span>
               </Menu.Button>
               <Transition
