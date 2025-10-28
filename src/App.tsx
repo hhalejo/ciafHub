@@ -1,8 +1,8 @@
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Header } from './components/Layout/Header';
-import { Navigation } from './Components/Layout/Navigation';
-import { AuthForm } from './Components/Auth/AuthForm';
+import { Navigation } from './components/Layout/Navigation';
+import { AuthForm } from './components/Auth/AuthForm';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { useAuth } from './hooks/useAuth';
 import { CreatePage } from "./components/pages/CreatePage";
