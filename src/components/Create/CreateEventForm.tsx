@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { supabase } from "../../lib/supabase"; // importa tu cliente supabase
+import { supabase } from "../../lib/supabase";
+import { useAuth } from "../../hooks/useAuth"; // ✅ Importa el hook
 
 export const CreateEventForm: React.FC = () => {
+  const { user } = useAuth(); // ✅ usuario actual desde el contexto
+
   const [category, setCategory] = useState("");
   const [subcategory, setSubcategory] = useState("");
   const [title, setTitle] = useState("");
@@ -16,36 +19,42 @@ export const CreateEventForm: React.FC = () => {
       "Clases magistrales abiertas",
       "Talleres prácticos",
       "Simposios y congresos",
-      "Defensas de proyectos de grado"
+      "Defensas de proyectos de grado",
     ],
     "🛠️ Formación y Capacitación": [
       "Cursos cortos / diplomados",
       "Capacitaciones en software",
       "Bootcamps de programación/diseño",
-      "Preparación para certificaciones"
+      "Preparación para certificaciones",
     ],
     "👥 Integración y Comunidad": [
       "Feria de proyectos estudiantiles",
       "Grupos de debate y foros",
       "Concursos y olimpiadas",
-      "Clubes de lectura, cine o idiomas"
+      "Clubes de lectura, cine o idiomas",
     ],
     "🌐 Vinculación Externa": [
       "Feria de empleo y pasantías",
       "Networking con egresados",
       "Conferencias internacionales",
-      "Convenios con otras universidades"
+      "Convenios con otras universidades",
     ],
     "🎭 Culturales y Bienestar": [
       "Eventos artísticos y culturales",
       "Días conmemorativos",
       "Actividades deportivas",
-      "Charlas de bienestar y salud mental"
-    ]
+      "Charlas de bienestar y salud mental",
+    ],
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!user) {
+      alert("⚠️ Debes iniciar sesión para crear un evento.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -57,6 +66,7 @@ export const CreateEventForm: React.FC = () => {
           description,
           date,
           location,
+          user_id: user.id, // ✅ ahora sí, UUID válido
         },
       ]);
 
@@ -73,8 +83,8 @@ export const CreateEventForm: React.FC = () => {
       setDate("");
       setLocation("");
     } catch (err: any) {
-      console.error(err.message);
-      alert("❌ Error al crear el evento");
+      console.error("❌ Error al crear evento:", err.message);
+      alert("❌ No se pudo crear el evento.");
     } finally {
       setLoading(false);
     }

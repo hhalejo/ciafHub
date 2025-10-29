@@ -20,7 +20,7 @@ export function EventCard({ event, onDelete, onClick, currentUserId }: EventCard
     setShowConfirm(false);
   };
 
-  const isOwner = String(event.user_id) === String(currentUserId);// ✅ validación del dueño
+  const isOwner = String(event.id) === String(currentUserId);// ✅ validación del dueño
 
   return (
     <div
