@@ -16,6 +16,7 @@ export function Header() {
 
 const handleSignOut = async () => {
   try {
+    
     // Si el contexto no expone signOut en su tipo, usa una comprobación segura en tiempo de ejecución
     if ('signOut' in auth && typeof (auth as any).signOut === 'function') {
       await (auth as any).signOut();

@@ -31,9 +31,7 @@ export function EventList({ events, onSelectEvent, onDelete, currentUserId }: Ev
               Fecha: {new Date(event.date).toLocaleDateString("es-ES")}
             </p>
             <p className="text-xs text-gray-500 mt-1">Ubicación: {event.location}</p>
-            <p className="text-xs text-gray-400 mt-1">
-              Publicado por: {event.user?.full_name || "Anónimo"}
-            </p>
+            
           </div>
 
           {/* 🗑️ Mostrar solo si el evento es del usuario actual */}

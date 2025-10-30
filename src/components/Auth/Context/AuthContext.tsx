@@ -39,9 +39,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // ✅ Cerrar sesión (lo que usa tu Header)
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null); // Limpia estado local
-  };
+  try {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+
+    // Limpieza adicional (por si Supabase no elimina el storage)
+    localStorage.removeItem('supabase.auth.token');
+    localStorage.removeItem('supabase.auth.refresh-token');
+    sessionStorage.clear();
+
+    setUser(null);
+  } catch (error) {
+    console.error('Error al cerrar sesión:', error);
+  }
+};
 
   return (
     <AuthContext.Provider value={{ user, loading, signOut }}>
