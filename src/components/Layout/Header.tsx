@@ -2,34 +2,31 @@ import React, { useState, Fragment } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { MagnifyingGlassIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import { Menu, Transition } from '@headlessui/react';
-import { useAuth } from '../../hooks/useAuth';
-
+import { useAuth } from '..//Auth/Context/AuthContext';
 
 export function Header() {
-  const auth = useAuth();
-  const { user } = auth;
+  const { user, signOut } = useAuth(); // ✅ usamos directamente signOut del contexto
   const navigate = useNavigate();
-  const location = useLocation(); // 👈 Para saber la ruta actual
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
 
-   // 👈 Añade signOut aquí
+  // ✅ cerrar sesión correctamente (también en producción/Vercel)
+  const handleSignOut = async () => {
+    try {
+      await signOut();
 
-const handleSignOut = async () => {
-  try {
-    
-    // Si el contexto no expone signOut en su tipo, usa una comprobación segura en tiempo de ejecución
-    if ('signOut' in auth && typeof (auth as any).signOut === 'function') {
-      await (auth as any).signOut();
-      console.log("Usuario actual:", user);
+      // Limpieza adicional (por si Supabase no borra tokens en Vercel)
+      localStorage.removeItem('supabase.auth.token');
+      localStorage.removeItem('supabase.auth.refresh-token');
+      sessionStorage.clear();
+
+      // Redirige con recarga limpia para evitar datos en caché
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
     }
-    navigate('/');   // Redirige después
-  } catch (error) {
-    console.error('Error signing out:', error);
-    
-  }
-};
+  };
 
-  
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -39,10 +36,6 @@ const handleSignOut = async () => {
 
   // 👇 Detecta si estamos en login o signup
   const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
-
-  console.log("Usuario actual:", user);
-
-  
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -54,23 +47,23 @@ const handleSignOut = async () => {
               <span className="text-white font-bold text-sm">C</span>
             </div>
             <span className="text-xl font-bold text-gray-900">CIAF Community</span>
-
           </Link>
 
-         {user && !isAuthPage && (
-  <form onSubmit={handleSearch} className="flex-1 max-w-lg mx-8">
-    <div className="relative">
-      <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-      <input
-        type="text"
-        placeholder="Buscar servicios, eventos, oportunidades..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-      />
-    </div>
-  </form>
-)}
+          {/* 🔍 Barra de búsqueda (solo si hay usuario y no estamos en login/signup) */}
+          {user && !isAuthPage && (
+            <form onSubmit={handleSearch} className="flex-1 max-w-lg mx-8">
+              <div className="relative">
+                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Buscar servicios, eventos, oportunidades..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </form>
+          )}
 
           {/* 👤 User Menu */}
           {user ? (
@@ -79,9 +72,9 @@ const handleSignOut = async () => {
                 <UserCircleIcon className="h-8 w-8" />
                 <span className="hidden md:block text-sm font-medium">
                   {user.user_metadata?.full_name || user.email}
-                  
                 </span>
               </Menu.Button>
+
               <Transition
                 as={Fragment}
                 enter="transition ease-out duration-100"
@@ -123,10 +116,7 @@ const handleSignOut = async () => {
             </Menu>
           ) : (
             <div className="flex items-center space-x-4">
-              <Link
-                to="/login"
-                className="text-gray-700 hover:text-gray-900 font-medium"
-              >
+              <Link to="/login" className="text-gray-700 hover:text-gray-900 font-medium">
                 Iniciar Sesión
               </Link>
               <Link
