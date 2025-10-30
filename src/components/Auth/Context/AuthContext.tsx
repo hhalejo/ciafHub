@@ -37,17 +37,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.subscription.unsubscribe();
   }, []);
 
-  // ✅ Cerrar sesión (lo que usa tu Header)
   const signOut = async () => {
   try {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
 
-    // Limpieza adicional (por si Supabase no elimina el storage)
-    localStorage.removeItem('supabase.auth.token');
-    localStorage.removeItem('supabase.auth.refresh-token');
-    sessionStorage.clear();
+    // 🔥 Limpia cualquier sesión local de Supabase (nombre dinámico)
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith('sb-') && key.endsWith('-auth-token')) {
+        localStorage.removeItem(key);
+      }
+    });
 
+    // Limpieza adicional
+    sessionStorage.clear();
     setUser(null);
   } catch (error) {
     console.error('Error al cerrar sesión:', error);
