@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 | CIAF Community</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
+      .float {
+        animation: float 3s ease-in-out infinite;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center min-h-screen px-6 text-center"
+  >
+    <div class="max-w-lg mx-auto">
+      <div class="relative">
+        <h1 class="text-[8rem] font-extrabold text-blue-600 float select-none">
+          404
+        </h1>
+        <div
+          class="absolute inset-0 flex items-center justify-center -z-10 opacity-10"
+        >
+          <div
+            class="w-64 h-64 bg-blue-300 rounded-full blur-3xl"
+            style="animation: float 4s ease-in-out infinite;"
+          ></div>
+        </div>
+      </div>
+
+      <h2 class="text-2xl md:text-3xl font-semibold text-gray-800 mt-4">
+        ¡Ups! Página no encontrada
+      </h2>
+      <p class="text-gray-600 mt-3 leading-relaxed">
+        Parece que la página que estás buscando no existe o fue movida.<br />
+        Regresa al inicio y sigue explorando la comunidad CIAF 🌟
+      </p>
+
+      <a
+        href="/"
+        class="inline-block mt-8 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300"
+      >
+        Volver al Inicio
+      </a>
+
+      <div class="mt-10 text-xs text-gray-400">
+        &copy; <span id="year"></span> CIAF Community — Todos los derechos
+        reservados.
+      </div>
+    </div>
+
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>

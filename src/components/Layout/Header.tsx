@@ -21,7 +21,7 @@ export function Header() {
       sessionStorage.clear();
 
       // Redirige con recarga limpia para evitar datos en caché
-      window.location.href = '/login';
+      window.location.href = '/';
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     }
