@@ -2,7 +2,7 @@ import React, { useState, Fragment } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { MagnifyingGlassIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import { Menu, Transition } from '@headlessui/react';
-import { useAuth } from '..//Auth/Context/AuthContext';
+import { useAuth } from '../Auth/Context/AuthContext';
 
 export function Header() {
   const { user, signOut } = useAuth(); // ✅ usamos directamente signOut del contexto
@@ -21,7 +21,7 @@ export function Header() {
       sessionStorage.clear();
 
       // Redirige con recarga limpia para evitar datos en caché
-      window.location.href = '/';
+      window.location.href = '/login';
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     }
